@@ -1,33 +1,45 @@
 package com.esiea.sfm.cli;
 
+import com.esiea.sfm.application.FileService;
 import java.util.Scanner;
 
 public class CommandLineInterface {
-
     private final Scanner scanner = new Scanner(System.in);
     private final MenuRenderer menuRenderer = new MenuRenderer();
     private final CommandParser parser = new CommandParser();
+    private final FileService fileService;
+
+    public CommandLineInterface(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     public void start() {
         boolean running = true;
-
         while (running) {
             menuRenderer.display();
             String input = scanner.nextLine();
 
-            CommandParser.Command command = parser.parse(input);
+            CommandParser.ParseResult result = parser.parse(input);
 
-            switch (command) {
-                case HELP -> {
-                    // le menu est déjà affiché
+            switch (result.command()) {
+                case CREATE -> fileService.createFile(result.argument());
+
+                case READ -> {
+                    String content = fileService.readFile(result.argument());
+                    System.out.println("Contenu : " + content);
                 }
+
+                case DELETE -> fileService.deleteFile(result.argument());
+
                 case EXIT -> {
                     running = false;
-                    System.out.println("Fermeture de l'application.");
+                    System.out.println("Fermeture...");
                 }
-                case UNKNOWN -> {
-                    System.out.println("Commande inconnue.");
+
+                case HELP -> {
                 }
+
+                case UNKNOWN -> System.out.println("Commande inconnue.");
             }
         }
     }

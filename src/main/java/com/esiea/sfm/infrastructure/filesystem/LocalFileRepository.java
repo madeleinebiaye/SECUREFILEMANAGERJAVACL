@@ -1,6 +1,7 @@
 package com.esiea.sfm.infrastructure.filesystem;
 
 import com.esiea.sfm.domain.repository.FileRepository;
+<<<<<<< HEAD
 import com.esiea.sfm.domain.exception.FileAccessException;
 
 import java.io.File;
@@ -32,3 +33,29 @@ public class LocalFileRepository implements FileRepository {
         }
     }
 }
+=======
+import java.io.File;
+
+public class LocalFileRepository implements FileRepository {
+    @Override
+    public void create(String filename) {
+        try {
+            new File(filename).createNewFile();
+            System.out.println("Fichier créé sur le disque.");
+        } catch (Exception e) {
+            System.out.println("Erreur : " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String read(String filename) {
+        return "Contenu du fichier " + filename;
+    }
+
+    @Override
+    public void delete(String filename) {
+        new File(filename).delete();
+        System.out.println("Fichier supprimé.");
+    }
+}
+>>>>>>> e76d202 (Itération 1 : fondations - création de fichier)
