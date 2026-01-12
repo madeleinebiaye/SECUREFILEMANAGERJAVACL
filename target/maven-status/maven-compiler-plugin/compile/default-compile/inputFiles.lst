@@ -1,0 +1,14 @@
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\application\FileService.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\cli\CommandLineInterface.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\cli\CommandParser.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\cli\MenuRenderer.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\domain\exception\FileAccessException.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\domain\exception\InvalidCommandException.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\domain\model\SecureFile.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\domain\repository\FileRepository.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\infrastructure\filesystem\LocalFileRepository.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\infrastructure\logging\AppLogger.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\infrastructure\security\CryptoService.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\infrastructure\security\HashService.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\Main.java
+C:\Users\HP\OneDrive - ESMT\Bureau\projet gestionnaire de fichier securise\secure-file-manager-java\src\main\java\com\esiea\sfm\util\InputValidator.java
