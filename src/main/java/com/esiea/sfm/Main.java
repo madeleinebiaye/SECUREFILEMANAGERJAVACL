@@ -1,7 +1,10 @@
 package com.esiea.sfm;
 
+import com.esiea.sfm.cli.CommandLineInterface;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Secure File Manager - démarrage");
+        new CommandLineInterface().start();
     }
 }
+e
