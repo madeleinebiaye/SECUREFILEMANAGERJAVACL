@@ -5,28 +5,30 @@ import java.util.Scanner;
 public class CommandLineInterface {
 
     private final Scanner scanner = new Scanner(System.in);
+    private final MenuRenderer menuRenderer = new MenuRenderer();
+    private final CommandParser parser = new CommandParser();
 
     public void start() {
         boolean running = true;
 
         while (running) {
-            displayMenu();
-            String command = scanner.nextLine();
+            menuRenderer.display();
+            String input = scanner.nextLine();
 
-            if ("exit".equalsIgnoreCase(command)) {
-                running = false;
-                System.out.println("Fermeture de l'application.");
-            } else {
-                System.out.println("Commande inconnue : " + command);
+            CommandParser.Command command = parser.parse(input);
+
+            switch (command) {
+                case HELP -> {
+                    // le menu est déjà affiché
+                }
+                case EXIT -> {
+                    running = false;
+                    System.out.println("Fermeture de l'application.");
+                }
+                case UNKNOWN -> {
+                    System.out.println("Commande inconnue.");
+                }
             }
         }
-    }
-
-    private void displayMenu() {
-        System.out.println();
-        System.out.println("=== Secure File Manager ===");
-        System.out.println("Commandes disponibles :");
-        System.out.println(" - exit : quitter");
-        System.out.print("> ");
     }
 }
