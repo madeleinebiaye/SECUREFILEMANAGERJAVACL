@@ -1,9 +1,6 @@
 package com.esiea.sfm.infrastructure.filesystem;
 
 import com.esiea.sfm.domain.repository.FileRepository;
-<<<<<<< HEAD
-import com.esiea.sfm.domain.exception.FileAccessException;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -11,51 +8,57 @@ public class LocalFileRepository implements FileRepository {
 
     @Override
     public void create(String filename) {
-        if (filename == null || filename.isBlank()) {
-            throw new FileAccessException("Nom de fichier invalide.");
-        }
-
         try {
             File file = new File(filename);
-
-            if (file.exists()) {
-                throw new FileAccessException("Le fichier existe déjà : " + filename);
+            if (file.createNewFile()) {
+                System.out.println("Succès : Fichier créé sur le disque.");
+            } else {
+                System.out.println("Erreur : Le fichier existe déjà.");
             }
-
-            if (!file.createNewFile()) {
-                throw new FileAccessException("Impossible de créer le fichier : " + filename);
-            }
-
         } catch (IOException e) {
-            throw new FileAccessException(
-                    "Erreur lors de la création du fichier : " + filename
-            );
-        }
-    }
-}
-=======
-import java.io.File;
-
-public class LocalFileRepository implements FileRepository {
-    @Override
-    public void create(String filename) {
-        try {
-            new File(filename).createNewFile();
-            System.out.println("Fichier créé sur le disque.");
-        } catch (Exception e) {
-            System.out.println("Erreur : " + e.getMessage());
+            System.err.println("Erreur technique lors de la création : " + e.getMessage());
         }
     }
 
     @Override
     public String read(String filename) {
-        return "Contenu du fichier " + filename;
+        // Pour l'instant, on simule la lecture ou on retourne un message
+        File file = new File(filename);
+        if (file.exists()) {
+            return "Lecture du fichier " + filename + " (Contenu à implémenter)";
+        }
+        return "Erreur : Le fichier n'existe pas.";
     }
 
     @Override
     public void delete(String filename) {
-        new File(filename).delete();
-        System.out.println("Fichier supprimé.");
+        File file = new File(filename);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("Succès : Fichier supprimé du disque.");
+            } else {
+                System.out.println("Erreur : Impossible de supprimer le fichier.");
+            }
+        } else {
+            System.out.println("Erreur : Le fichier n'existe pas.");
+        }
+    }
+
+    @Override
+    public void listFiles() {
+        // On regarde dans le répertoire courant (représenté par ".")
+        File currentDir = new File(".");
+        File[] filesList = currentDir.listFiles();
+
+        System.out.println("--- Contenu du répertoire ---");
+        if (filesList != null && filesList.length > 0) {
+            for (File file : filesList) {
+                String type = file.isDirectory() ? "[DOSSIER]" : "[FICHIER]";
+                System.out.println(type + " " + file.getName());
+            }
+        } else {
+            System.out.println("Le répertoire est vide.");
+        }
+        System.out.println("-----------------------------");
     }
 }
->>>>>>> e76d202 (Itération 1 : fondations - création de fichier)
