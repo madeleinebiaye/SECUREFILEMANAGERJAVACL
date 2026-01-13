@@ -8,6 +8,7 @@ public class MenuRenderer {
         System.out.println("Commandes disponibles :");
         System.out.println(" - create <nom_fichier> : créer un nouveau fichier");
         System.out.println(" - read <nom_fichier>   : lire le contenu d'un fichier");
+        System.out.println(" - update <nom_fichier> : écrire dans un fichier");
         System.out.println(" - delete <nom_fichier> : supprimer un fichier");
         System.out.println(" - ls                   : lister les fichiers");
         System.out.println(" - help                 : afficher ce menu");
