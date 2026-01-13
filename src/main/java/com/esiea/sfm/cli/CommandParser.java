@@ -23,7 +23,6 @@ public class CommandParser {
             case "read"   -> Command.READ;
             case "delete" -> Command.DELETE;
             case "ls" -> Command.LS;
-            case "cd" -> Command.LS;
             case "help"   -> Command.HELP;
             case "exit"   -> Command.EXIT;
             default       -> Command.UNKNOWN;
