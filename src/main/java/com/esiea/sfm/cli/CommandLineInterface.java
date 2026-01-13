@@ -1,7 +1,6 @@
 package com.esiea.sfm.cli;
 
 import com.esiea.sfm.application.FileService;
-
 import java.util.Scanner;
 
 public class CommandLineInterface {
@@ -27,29 +26,37 @@ public class CommandLineInterface {
             switch (result.command()) {
 
                 case CREATE -> {
-                    try {
-                        fileService.createFile(result.argument());
-                        System.out.println("Fichier créé : " + result.argument());
-                    } catch (RuntimeException e) {
-                        System.out.println("Erreur : " + e.getMessage());
-                    }
+                    // Appelle le service pour créer le fichier
+                    fileService.createFile(result.argument());
+                }
+
+                case DELETE -> {
+                    // Appelle le service pour supprimer le fichier
+                    fileService.deleteFile(result.argument());
+                }
+
+                case LS -> {
+                    // Appelle le service pour lister les fichiers
+                    fileService.listFiles();
+                }
+
+                case READ -> {
+                    // Récupère le contenu via le service et l'affiche
+                    String content = fileService.readFile(result.argument());
+                    System.out.println(content);
                 }
 
                 case HELP -> {
-                    // menu déjà affiché
+                    // Le menu est déjà affiché par menuRenderer.display() au début de la boucle
                 }
 
                 case EXIT -> {
                     running = false;
-                    System.out.println("Fermeture...");
-                }
-
-                case READ, DELETE, LS -> {
-                    System.out.println("Commande non implémentée pour l’instant.");
+                    System.out.println("Fermeture de l'application...");
                 }
 
                 case UNKNOWN -> {
-                    System.out.println("Commande inconnue.");
+                    System.out.println("Commande inconnue. Tapez 'help' pour voir les commandes.");
                 }
             }
         }
