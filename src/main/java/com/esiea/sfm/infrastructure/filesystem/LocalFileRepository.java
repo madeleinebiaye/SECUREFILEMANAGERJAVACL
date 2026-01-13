@@ -92,4 +92,24 @@ public class LocalFileRepository implements FileRepository {
             System.out.println((f.isDirectory() ? "[DIR] " : "[FILE] ") + f.getName());
         }
     }
+
+    public void storeHash(String filename, String hash) {
+        try {
+            Files.writeString(Path.of(filename + ".hash"), hash);
+        } catch (IOException e) {
+            AppLogger.error("Impossible de sauvegarder le hash pour : " + filename);
+        }
+    }
+
+    public String loadHash(String filename) {
+        try {
+            Path path = Path.of(filename + ".hash");
+            if (Files.exists(path)) {
+                return Files.readString(path);
+            }
+        } catch (IOException e) {
+            AppLogger.error("Erreur lecture hash pour : " + filename);
+        }
+        return null;
+    }
 }

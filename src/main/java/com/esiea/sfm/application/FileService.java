@@ -13,22 +13,38 @@ public class FileService {
         this.hashService = hashService;
     }
 /// /////////////////////////////////////////
-    public String readFile(String filename) {
-        String content = repository.read(filename);
-        // On calcule le hash du contenu lu
-        String hash = hashService.calculateHash(content);
+public String readFile(String filename) {
+    String content = repository.read(filename);
+    String currentHash = hashService.calculateHash(content);
+    String storedHash = repository.loadHash(filename);
 
-        return "--- Contenu du fichier ---\n" + content +
-                "\n--- Empreinte (SHA-256) ---\n" + hash;
+    StringBuilder output = new StringBuilder();
+    output.append("--- Contenu du fichier ---\n").append(content);
+
+    if (storedHash != null) {
+        if (storedHash.equals(currentHash)) {
+            output.append("\n\nINTÉGRITÉ VÉRIFIÉE : Le fichier est sain.");
+        } else {
+            output.append("\n\nALERTE SÉCURITÉ : Le fichier a été modifié à l'extérieur de l'application !");
+            output.append("\nHash attendu : ").append(storedHash);
+            output.append("\nHash actuel  : ").append(currentHash);
+        }
+    } else {
+        output.append("\n\nATTENTION : Aucune empreinte disponible pour ce fichier.");
+    }
+
+    return output.toString();
+}
+
+    public void updateFile(String filename, String content) {
+        repository.update(filename, content); // On sauvegarde le texte
+        String newHash = hashService.calculateHash(content); // On calcule la nouvelle empreinte
+        repository.storeHash(filename, newHash); // On la sauvegarde
     }
 /// /////////////////////////////////////////
 
     public void createFile(String filename) {
         repository.create(filename);
-    }
-
-    public void updateFile(String filename, String content) {
-        repository.update(filename, content);
     }
 
     public void deleteFile(String filename) {

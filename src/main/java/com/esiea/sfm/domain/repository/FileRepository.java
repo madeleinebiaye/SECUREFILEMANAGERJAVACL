@@ -18,4 +18,8 @@ public interface FileRepository {
 
     // Editer un fichier
     void update(String filename, String content);
+
+    void storeHash(String filename, String hash);
+
+    public String loadHash(String filename);
 }
