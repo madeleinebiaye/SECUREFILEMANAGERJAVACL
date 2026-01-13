@@ -20,4 +20,9 @@ public class FileService {
     public void deleteFile(String filename) {
         repository.delete(filename);
     }
+
+    // Dans FileService.java
+    public void listFiles() {
+        repository.listFiles();
+    }
 }

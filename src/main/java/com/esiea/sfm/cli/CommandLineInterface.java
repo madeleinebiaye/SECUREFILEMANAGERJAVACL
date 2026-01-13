@@ -36,6 +36,8 @@ public class CommandLineInterface {
                     System.out.println("Fermeture...");
                 }
 
+                case LS -> fileService.listFiles();
+
                 case HELP -> {
                 }
 
