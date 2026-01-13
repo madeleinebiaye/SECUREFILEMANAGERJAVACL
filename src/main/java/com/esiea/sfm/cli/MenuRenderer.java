@@ -10,7 +10,6 @@ public class MenuRenderer {
         System.out.println(" - read <nom_fichier>   : lire le contenu d'un fichier");
         System.out.println(" - delete <nom_fichier> : supprimer un fichier");
         System.out.println(" - ls                   : lister les fichiers");
-        System.out.println(" - cd <nom_répertoire>  : se déplacer dans un répertoire");
         System.out.println(" - help                 : afficher ce menu");
         System.out.println(" - exit                 : quitter l'application");
         System.out.print("> ");

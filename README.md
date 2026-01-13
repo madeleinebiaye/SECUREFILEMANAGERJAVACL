@@ -1,93 +1,128 @@
-# secure-file-manager-java
+# Secure File Manager – Java (CLI)
+
+Contexte du projet
+Ce projet consiste à développer un gestionnaire de fichiers sécurisé en ligne de commande, en Java, sans interface graphique.
+Il est réalisé en binôme dans un cadre pédagogique et suit une approche itérative et architecturée.
+
+L’objectif principal est de mettre en œuvre :
+- une architecture logicielle propre et maintenable,
+- une séparation claire des responsabilités,
+- des fondations solides pour l’ajout progressif de mécanismes de sécurité tout en prenant en compte la disponibilite l'integrite et egalement la confidentialite 
+
+## 🧱 Architecture du projet
+
+Le projet adopte une architecture en couches, adaptée à une application CLI :
+
+CLI
+↓
+Application
+↓
+Domain
+↓
+Infrastructure
+
+Cette organisation permet :
+- une forte lisibilité du code,
+- une évolutivité ,
+- une intégration progressive de la sécurité (hachage, chiffrement).
+
+## 📂 Arborescence principale
+
+src/main/java/com/esiea/sfm
+├── Main.java
+├── cli
+│ ├── CommandLineInterface.java
+│ ├── CommandParser.java
+│ └── MenuRenderer.java
+├── application
+│ └── FileService.java
+├── domain
+│ ├── model
+│ ├── repository
+│ └── exception
+├── infrastructure
+│ ├── filesystem
+│ ├── logging
+│ └── security
+└── util 
+target/
+└── (généré automatiquement par Maven – non versionné)
+## Rôle des couches
+
+### 🔹 CLI
+- Interaction avec l’utilisateur via le terminal
+- Affichage des menus
+- Lecture et interprétation des commandes
+
+### 🔹 Application
+- Orchestration des cas d’usage
+- Point d’entrée des fonctionnalités 
+- Coordination entre domaine et infrastructure
+
+### 🔹 Domain
+- Règles 
+- Modèles
+- Exceptions
+
+### 🔹 Infrastructure
+- Accès au système de fichiers
+- Implémentations concrètes
+- Services techniques (préparés pour sécurité et journalisation)
+
+---
+
+##  État actuel du projet (Itération 1)
+
+###  Réalisé
+- Structure Maven fonctionnelle
+- Architecture en couches complète
+- Point d’entrée `Main` 
+- CLI structurée (parser, renderer, interface)
+- Premier cas d’usage : **création de fichier**
+- Gestion des erreurs via exceptions métier
+- Dépôt GitLab propre avec commits 
+
+### En cours
+- Finalisation de la boucle CLI
+- Amélioration de la gestion des commandes utilisateur
+
+---
+
+## Technologies utilisées
+
+- Java 17
+- Maven
+- Git / GitLab
+- IntelliJ IDEA
+- Application en ligne de commande (CLI)
 
 
+## 🔜 Évolutions prévues
 
-## Getting started
+### Itération 2
+- Journalisation technique
+- Contrôle d’intégrité (hachage)
+- Détection de modifications non autorisées
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Itération 3
+- Chiffrement des fichiers
+- Gestion sécurisée des clés
+- Protection avancée des données
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+---
 
-## Add your files
+##  Organisation du travail
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+Le travail est réparti entre les deux membres du binôme :
+- Conception de l’architecture
+- Implémentation des couches métier et techniques
+- Développement de l’interface CLI
+- Tests et validation fonctionnelle
 
-```
-cd existing_repo
-git remote add origin https://gitlab.esiea.fr/madeleine.biaye/secure-file-manager-java.git
-git branch -M main
-git push -uf origin main
-```
+---
 
-## Integrate with your tools
+## Lancer le projet
 
-- [ ] [Set up project integrations](https://gitlab.esiea.fr/madeleine.biaye/secure-file-manager-java/-/settings/integrations)
+Le projet est destiné à être exécuté depuis un IDE (IntelliJ IDEA) ou via Maven.
+L’exécution démarre depuis la classe `Main`.
 
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
