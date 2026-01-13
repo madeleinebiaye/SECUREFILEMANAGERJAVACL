@@ -2,7 +2,6 @@ package com.esiea.sfm.cli;
 
 public class CommandParser {
 
-    // Classe interne pour transporter le résultat complet
     public record ParseResult(Command command, String argument) {}
 
     public enum Command {

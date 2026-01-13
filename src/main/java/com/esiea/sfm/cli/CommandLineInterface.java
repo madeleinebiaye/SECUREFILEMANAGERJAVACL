@@ -20,50 +20,24 @@ public class CommandLineInterface {
         while (running) {
             menuRenderer.display();
             String input = scanner.nextLine();
-
             CommandParser.ParseResult result = parser.parse(input);
 
-            switch (result.command()) {
-
-                case CREATE -> {
-                    // Appelle le service pour créer le fichier
-                    fileService.createFile(result.argument());
+            try {
+                switch (result.command()) {
+                    case CREATE -> { fileService.createFile(result.argument()); System.out.println("Fichier créé !"); }
+                    case READ   -> System.out.println(fileService.readFile(result.argument()));
+                    case UPDATE -> {
+                        System.out.print("Contenu : ");
+                        fileService.updateFile(result.argument(), scanner.nextLine());
+                    }
+                    case DELETE -> { fileService.deleteFile(result.argument()); System.out.println("Supprimé !"); }
+                    case LS     -> fileService.listFiles();
+                    case EXIT   -> running = false;
+                    default     -> System.out.println("Commande inconnue.");
                 }
-
-                case DELETE -> {
-                    // Appelle le service pour supprimer le fichier
-                    fileService.deleteFile(result.argument());
-                }
-
-                case LS -> {
-                    // Appelle le service pour lister les fichiers
-                    fileService.listFiles();
-                }
-
-                case READ -> {
-                    // Récupère le contenu via le service et l'affiche
-                    String content = fileService.readFile(result.argument());
-                    System.out.println(content);
-                }
-                case UPDATE -> {
-                    // On demande à l'utilisateur de saisir le nouveau contenu
-                    System.out.print("Entrez le nouveau contenu du fichier : ");
-                    String content = scanner.nextLine();
-                    fileService.updateFile(result.argument(), content);
-                }
-
-                case HELP -> {
-                    // Le menu est déjà affiché par menuRenderer.display() au début de la boucle
-                }
-
-                case EXIT -> {
-                    running = false;
-                    System.out.println("Fermeture de l'application...");
-                }
-
-                case UNKNOWN -> {
-                    System.out.println("Commande inconnue. Tapez 'help' pour voir les commandes.");
-                }
+            } catch (RuntimeException e) {
+                // C'est ici que toutes nos exceptions personnalisées arrivent !
+                System.out.println("--- ERREUR : " + e.getMessage() + " ---");
             }
         }
     }

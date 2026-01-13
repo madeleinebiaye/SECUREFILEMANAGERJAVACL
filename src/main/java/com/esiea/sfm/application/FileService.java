@@ -17,16 +17,16 @@ public class FileService {
         return repository.read(filename);
     }
 
+    public void updateFile(String filename, String content) {
+        repository.update(filename, content);
+    }
+
     public void deleteFile(String filename) {
         repository.delete(filename);
     }
 
-    // Dans FileService.java
     public void listFiles() {
         repository.listFiles();
     }
 
-    public void updateFile(String filename, String content) {
-        repository.update(filename, content);
-    }
 }
