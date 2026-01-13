@@ -19,4 +19,6 @@ public interface FileRepository {
 
     // Lister les fichiers présents (Nouvelle commande)
     void listFiles();
+
+    void update(String filename, String content);
 }

@@ -25,4 +25,8 @@ public class FileService {
     public void listFiles() {
         repository.listFiles();
     }
+
+    public void updateFile(String filename, String content) {
+        repository.update(filename, content);
+    }
 }

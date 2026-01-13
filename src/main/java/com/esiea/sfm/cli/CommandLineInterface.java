@@ -45,6 +45,12 @@ public class CommandLineInterface {
                     String content = fileService.readFile(result.argument());
                     System.out.println(content);
                 }
+                case UPDATE -> {
+                    // On demande à l'utilisateur de saisir le nouveau contenu
+                    System.out.print("Entrez le nouveau contenu du fichier : ");
+                    String content = scanner.nextLine();
+                    fileService.updateFile(result.argument(), content);
+                }
 
                 case HELP -> {
                     // Le menu est déjà affiché par menuRenderer.display() au début de la boucle

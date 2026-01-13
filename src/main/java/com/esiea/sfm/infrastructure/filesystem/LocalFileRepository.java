@@ -4,6 +4,9 @@ import com.esiea.sfm.domain.repository.FileRepository;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 public class LocalFileRepository implements FileRepository {
 
     @Override
@@ -20,13 +23,23 @@ public class LocalFileRepository implements FileRepository {
         }
     }
 
+
     @Override
     public String read(String filename) {
+        if (filename == null || filename.isBlank()) {
+            return "Erreur : Nom de fichier manquant.";
+        }
+
         File file = new File(filename);
         if (file.exists()) {
-            return "Lecture du fichier " + filename + " (Contenu à implémenter avec Files.readString)";
+            try {
+                // Lit le contenu réel du fichier
+                return Files.readString(Path.of(filename));
+            } catch (IOException e) {
+                return "Erreur technique lors de la lecture : " + e.getMessage();
+            }
         }
-        return "Erreur : Le fichier n'existe pas.";
+        return "Erreur : Le fichier '" + filename + "' n'existe pas.";
     }
 
     @Override
@@ -59,5 +72,20 @@ public class LocalFileRepository implements FileRepository {
             System.out.println("Le répertoire est vide.");
         }
         System.out.println("-----------------------------");
+    }
+
+    @Override
+    public void update(String filename, String content) {
+        File file = new File(filename);
+        if (file.exists()) {
+            try {
+                java.nio.file.Files.writeString(java.nio.file.Path.of(filename), content);
+                System.out.println("Succès : Le fichier a été mis à jour.");
+            } catch (IOException e) {
+                System.err.println("Erreur lors de la mise à jour : " + e.getMessage());
+            }
+        } else {
+            System.out.println("Erreur : Le fichier n'existe pas. Utilisez 'create' d'abord.");
+        }
     }
 }
