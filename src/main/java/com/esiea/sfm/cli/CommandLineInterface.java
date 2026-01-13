@@ -1,9 +1,11 @@
 package com.esiea.sfm.cli;
 
 import com.esiea.sfm.application.FileService;
+
 import java.util.Scanner;
 
 public class CommandLineInterface {
+
     private final Scanner scanner = new Scanner(System.in);
     private final MenuRenderer menuRenderer = new MenuRenderer();
     private final CommandParser parser = new CommandParser();
@@ -15,6 +17,7 @@ public class CommandLineInterface {
 
     public void start() {
         boolean running = true;
+
         while (running) {
             menuRenderer.display();
             String input = scanner.nextLine();
@@ -22,26 +25,32 @@ public class CommandLineInterface {
             CommandParser.ParseResult result = parser.parse(input);
 
             switch (result.command()) {
-                case CREATE -> fileService.createFile(result.argument());
 
-                case READ -> {
-                    String content = fileService.readFile(result.argument());
-                    System.out.println("Contenu : " + content);
+                case CREATE -> {
+                    try {
+                        fileService.createFile(result.argument());
+                        System.out.println("Fichier créé : " + result.argument());
+                    } catch (RuntimeException e) {
+                        System.out.println("Erreur : " + e.getMessage());
+                    }
                 }
 
-                case DELETE -> fileService.deleteFile(result.argument());
+                case HELP -> {
+                    // menu déjà affiché
+                }
 
                 case EXIT -> {
                     running = false;
                     System.out.println("Fermeture...");
                 }
 
-                case LS -> fileService.listFiles();
-
-                case HELP -> {
+                case READ, DELETE, LS -> {
+                    System.out.println("Commande non implémentée pour l’instant.");
                 }
 
-                case UNKNOWN -> System.out.println("Commande inconnue.");
+                case UNKNOWN -> {
+                    System.out.println("Commande inconnue.");
+                }
             }
         }
     }
