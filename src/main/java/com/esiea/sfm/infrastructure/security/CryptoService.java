@@ -6,63 +6,51 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import java.security.SecureRandom;
 
-/**
- * Service de chiffrement symétrique basé sur AES-GCM.
- */
 public class CryptoService {
 
-    private static final int KEY_SIZE = 128;
-    private static final int IV_SIZE = 12;      // recommandé pour GCM
-    private static final int TAG_SIZE = 128;    // taille du tag d'authentification
+    private static final String ALGORITHM = "AES/GCM/NoPadding";
+    private static final int IV_LENGTH = 12;
+    private static final int TAG_LENGTH = 128;
 
-    private final SecretKey secretKey;
-    private final SecureRandom secureRandom = new SecureRandom();
+    private final SecretKey key;
 
     public CryptoService() {
-        this.secretKey = generateKey();
-    }
-
-    // Génération d'une clé AES
-    private SecretKey generateKey() {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(KEY_SIZE);
-            return keyGen.generateKey();
+            keyGen.init(256);
+            this.key = keyGen.generateKey();
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors de la génération de la clé.");
+            throw new RuntimeException("Erreur initialisation clé AES", e);
         }
     }
 
-    // Chiffrement des données
-    public EncryptedData encrypt(byte[] data) {
+    public record EncryptedData(byte[] data, byte[] iv) {}
+
+    public EncryptedData encrypt(byte[] plaintext) {
         try {
-            byte[] iv = new byte[IV_SIZE];
-            secureRandom.nextBytes(iv);
+            byte[] iv = new byte[IV_LENGTH];
+            new SecureRandom().nextBytes(iv);
 
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, new GCMParameterSpec(TAG_SIZE, iv));
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH, iv));
 
-            byte[] encrypted = cipher.doFinal(data);
+            byte[] encrypted = cipher.doFinal(plaintext);
             return new EncryptedData(encrypted, iv);
 
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du chiffrement.");
+            throw new RuntimeException("Erreur chiffrement", e);
         }
     }
 
-    // Déchiffrement des données
     public byte[] decrypt(byte[] encryptedData, byte[] iv) {
         try {
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(TAG_SIZE, iv));
+            Cipher cipher = Cipher.getInstance(ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(TAG_LENGTH, iv));
 
             return cipher.doFinal(encryptedData);
 
         } catch (Exception e) {
-            throw new RuntimeException("Erreur lors du déchiffrement.");
+            throw new RuntimeException("Erreur déchiffrement", e);
         }
     }
-
-    // Classe interne pour stocker données chiffrées + IV
-    public record EncryptedData(byte[] data, byte[] iv) {}
 }

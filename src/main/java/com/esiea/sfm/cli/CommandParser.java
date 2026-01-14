@@ -5,7 +5,7 @@ public class CommandParser {
     public record ParseResult(Command command, String argument) {}
 
     public enum Command {
-        CREATE, READ, DELETE, HELP, LS, UPDATE, cd, EXIT, UNKNOWN
+        CREATE, READ, DELETE, HELP, LS, UPDATE, EXIT, UNKNOWN
     }
 
     public ParseResult parse(String input) {

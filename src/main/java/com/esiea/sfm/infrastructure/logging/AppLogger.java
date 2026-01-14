@@ -1,8 +1,12 @@
 package com.esiea.sfm.infrastructure.logging;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AppLogger {
+
+    private static final DateTimeFormatter FORMATTER =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public static void info(String message) {
         log("INFO", message);
@@ -14,7 +18,7 @@ public class AppLogger {
 
     private static void log(String level, String message) {
         System.out.println(
-                "[" + LocalDateTime.now() + "] [" + level + "] " + message
+                "[" + LocalDateTime.now().format(FORMATTER) + "] [" + level + "] " + message
         );
     }
 }

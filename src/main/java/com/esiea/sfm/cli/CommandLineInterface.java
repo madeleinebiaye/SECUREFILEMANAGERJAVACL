@@ -2,6 +2,7 @@ package com.esiea.sfm.cli;
 
 import com.esiea.sfm.application.FileService;
 import java.util.Scanner;
+import com.esiea.sfm.infrastructure.logging.AppLogger;
 
 public class CommandLineInterface {
 
@@ -24,19 +25,52 @@ public class CommandLineInterface {
 
             try {
                 switch (result.command()) {
-                    case CREATE -> { fileService.createFile(result.argument()); System.out.println("Fichier créé !"); }
-                    case READ   -> System.out.println(fileService.readFile(result.argument()));
+
+                    case CREATE -> {
+                        fileService.createFile(result.argument());
+
+                        // Log technique
+                        AppLogger.info("Création du fichier : " + result.argument());
+
+                        // Message utilisateur
+                        System.out.println("Fichier créé : " + result.argument());
+                    }
+
+                    case READ -> {
+                        System.out.println(fileService.readFile(result.argument()));
+                    }
+
                     case UPDATE -> {
                         System.out.print("Contenu : ");
-                        fileService.updateFile(result.argument(), scanner.nextLine());
+                        String content = scanner.nextLine();
+                        fileService.updateFile(result.argument(), content);
+                        System.out.println("Fichier mis à jour.");
                     }
-                    case DELETE -> { fileService.deleteFile(result.argument()); System.out.println("Supprimé !"); }
-                    case LS     -> fileService.listFiles();
-                    case EXIT   -> running = false;
-                    default     -> System.out.println("Commande inconnue.");
+
+                    case DELETE -> {
+                        fileService.deleteFile(result.argument());
+                        System.out.println("Fichier supprimé.");
+                    }
+
+                    case LS -> {
+                        fileService.listFiles();
+                    }
+
+                    case HELP -> {
+                        // Le menu est déjà affiché au début de la boucle
+                    }
+
+                    case EXIT -> {
+                        running = false;
+                        System.out.println("Fermeture...");
+                    }
+
+                    case UNKNOWN -> {
+                        System.out.println("Commande inconnue.");
+                    }
                 }
             } catch (RuntimeException e) {
-                // C'est ici que toutes nos exceptions personnalisées arrivent !
+                // Toutes les exceptions métier arrivent ici
                 System.out.println("--- ERREUR : " + e.getMessage() + " ---");
             }
         }
