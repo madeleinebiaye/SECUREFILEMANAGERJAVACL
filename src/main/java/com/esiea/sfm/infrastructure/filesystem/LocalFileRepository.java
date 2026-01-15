@@ -15,35 +15,20 @@ import java.nio.file.Paths;
 public class LocalFileRepository implements FileRepository {
 
     private static final int IV_SIZE = 12;
-    private final Path rootPath;      // La racine fixe du coffre-fort [cite: 38]
-    private Path currentRelativePath; // Position actuelle de l'utilisateur
+    private final Path rootPath;
+    private Path currentRelativePath;
 
     public LocalFileRepository(String rootDir) {
-        // Initialisation de la racine sécurisée [cite: 58]
         this.rootPath = Paths.get(rootDir).toAbsolutePath().normalize();
         this.currentRelativePath = Paths.get("");
-
-        try {
-            // Création automatique du répertoire utilisateur s'il n'existe pas [cite: 34]
-            Files.createDirectories(rootPath);
-            AppLogger.info("Système de fichiers initialisé dans : " + rootPath);
-        } catch (IOException e) {
-            throw new FileAccessException("Impossible d'initialiser le stockage.");
-        }
     }
 
-    /**
-     * Sécurité cruciale : empêche de sortir du répertoire autorisé[cite: 38, 116].
-     */
     private Path resolveSafePath(String inputPath) {
-        Path targetPath = rootPath.resolve(currentRelativePath)
-                .resolve(inputPath)
-                .normalize();
+        Path targetPath = rootPath.resolve(currentRelativePath).resolve(inputPath).normalize();
 
-        // Vérification que le chemin cible commence toujours par la racine
         if (!targetPath.startsWith(rootPath)) {
             AppLogger.error("Tentative d'évasion détectée !");
-            throw new InvalidCommandException("Accès refusé : Interdiction de sortir du répertoire autorisé.");
+            throw new InvalidCommandException("Accès refusé : Interdiction de sortir du répertoire gestionnaire !!!!!!!!!!");
         }
         return targetPath;
     }
@@ -135,15 +120,14 @@ public class LocalFileRepository implements FileRepository {
 
     @Override
     public void listFiles() {
-        Path currentDir = rootPath.resolve(currentRelativePath);
+        Path currentDir = rootPath.resolve(currentRelativePath); //combiné les chemins
         File[] files = currentDir.toFile().listFiles();
 
-        if (files == null) throw new FileAccessException("Erreur de lecture répertoire.");
+        if (files == null) throw new FileAccessException("Erreur de lecture répertoire");
 
         for (File f : files) {
-            // Cacher les fichiers techniques (.hash) pour la clarté de l'interface [cite: 41, 85]
             if (!f.getName().endsWith(".hash")) {
-                System.out.println((f.isDirectory() ? "[DIR] " : "[FILE] ") + f.getName());
+                System.out.println((f.isDirectory() ? "Répertoire : " : "Fichier : ") + f.getName());
             }
         }
     }

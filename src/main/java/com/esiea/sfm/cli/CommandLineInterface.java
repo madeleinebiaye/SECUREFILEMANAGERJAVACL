@@ -19,12 +19,12 @@ public class CommandLineInterface {
         boolean running = true;
 
         while (running) {
-            menuRenderer.display();
+
             String input = scanner.nextLine();
             CommandParser.ParseResult result = parser.parse(input);
 
             try {
-                switch (result.command()) {
+                switch (result.commande()) {
 
                     case CREATE -> {
                         fileService.createFile(result.argument());
@@ -71,7 +71,7 @@ public class CommandLineInterface {
                     }
 
                     case HELP -> {
-                        // Le menu est déjà affiché au début de la boucle
+                        menuRenderer.display();
                     }
 
                     case EXIT -> {
