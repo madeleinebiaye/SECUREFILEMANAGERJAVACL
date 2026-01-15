@@ -1,36 +1,36 @@
-# Secure File Manager – Java (CLI)
+Secure File Manager – Java (CLI)
+Présentation du projet
 
-## Contexte du projet
+Secure File Manager est une application Java en ligne de commande (CLI) permettant de gérer des fichiers de manière sécurisée, sans interface graphique.
+Le projet est réalisé en binôme, dans un cadre pédagogique, avec pour objectif principal de concevoir une architecture logicielle claire, maintenable et orientée sécurité, tout en garantissant le bon fonctionnement de l’application.
 
-Ce projet a pour objectif de développer un **gestionnaire de fichiers sécurisé en ligne de commande**, en Java, sans interface graphique.
-Il est réalisé en **binôme** dans un cadre pédagogique.
+ Objectifs du projet
+Développer un gestionnaire de fichiers en Java
+Mettre en place une architecture en couches
+Implémenter des mécanismes de sécurité des données
+Assurer la confidentialité, l’intégrité et la disponibilité des fichiers
+Gérer proprement les erreurs et les entrées utilisateur
+Travailler en binôme avec Git
 
-Le projet suit une **approche itérative**, avec une attention particulière portée à l’architecture du code et à la séparation des responsabilités.
-L’idée est de construire une base solide permettant d’ajouter progressivement des mécanismes de sécurité, en tenant compte des notions de **disponibilité**, **intégrité** et **confidentialité** des données.
+Architecture du projet
+L’application est organisée selon une architecture en couches, adaptée à une application CLI :
 
----
-
-## Architecture du projet
-
-L’application est organisée selon une **architecture en couches**, adaptée à une application CLI :
-
-```
 CLI
- ↓
+↓
 Application
- ↓
+↓
 Domain
- ↓
+↓
 Infrastructure
-```
 
-Cette organisation permet de mieux structurer le projet, de faciliter la compréhension du code et de préparer l’ajout de fonctionnalités de sécurité sans avoir à tout refactorer.
 
----
+Cette organisation permet :
+une bonne séparation des responsabilités
+une meilleure lisibilité du code
+une évolution progressive des mécanismes de sécurité
+une architecture stable et extensible
 
-## Arborescence principale
-
-```
+Arborescence principale
 src/main/java/com/esiea/sfm
 ├── Main.java
 ├── cli
@@ -49,95 +49,105 @@ src/main/java/com/esiea/sfm
 │   └── security
 └── util
 
-target/
-└── (généré automatiquement par Maven)
-```
+ Rôle des couches
+🔹 CLI
+Interaction avec l’utilisateur via le terminal
+Affichage des menus et messages
+Lecture et interprétation des commandes
+🔹 Application
+Gestion des cas d’usage
+Coordination entre la CLI et l’infrastructure
+Application des règles de sécurité métier
+🔹 Domain
+Modèles et règles métier
+Exceptions spécifiques au domaine
+🔹 Infrastructure
+Accès au système de fichiers
+Implémentations techniques
+Services de journalisation et de sécurité
+Sécurité mise en œuvre
+Chiffrement des données
+Chiffrement symétrique des fichiers basé sur AES-256 en mode GCM
+Chiffrement authentifié, garantissant à la fois :
+la confidentialité
+l’intégrité des données
+Génération d’un vecteur d’initialisation (IV) aléatoire pour chaque chiffrement 
+ Gestion de la clé
+La clé de chiffrement est dérivée via PBKDF2 (HmacSHA256) à partir d’un mot de passe global
+Ce choix permet :
+la persistance des fichiers chiffrés entre les sessions
+la stabilité du projet sans modifier l’architecture existante 
+ Dans cette version, le mot de passe est global et interne à l’application.
+Une gestion par mot de passe utilisateur constitue une évolution identifiée.
+Intégrité des fichiers
+Calcul d’une empreinte cryptographique (SHA-256) lors de la création ou modification des fichiers
+Vérification de l’intégrité à la lecture
+Détection des modifications effectuées en dehors de l’application 
+ Technologies utilisées
+Java 17
+Maven
+Java Cryptography Architecture (JCA)
+AES-GCM / PBKDF2
+Git / GitLab
+IntelliJ IDEA
+Application CLI
+État d’avancement
+Itération 1 – Fondations
 
----
+Architecture en couches fonctionnelle
 
-## Rôle des différentes couches
+Interface CLI opérationnelle
 
-### CLI
+Commandes de base (création, lecture, listing, suppression)
 
-* Interaction avec l’utilisateur via le terminal
-* Affichage des menus
-* Lecture et interprétation des commandes saisies
+Gestion des erreurs via exceptions
 
-### Application
+ Itération 2 – Intégrité et traçabilité
 
-* Gestion des cas d’usage
-* Point d’entrée des fonctionnalités
-* Lien entre le domaine et l’infrastructure
+Mise en place d’un système de journalisation
 
-### Domain
+Calcul et vérification des empreintes SHA-256
 
-* Règles métier
-* Modèles
-* Exceptions métier
+Détection des modifications non autorisées
+ Itération 3 – Chiffrement (version actuelle)
 
-### Infrastructure
+Chiffrement des fichiers avec AES-GCM
 
-* Accès au système de fichiers
-* Implémentations techniques
-* Services liés à la journalisation et à la sécurité
+IV aléatoire pour chaque opération
 
----
+🚀 Évolutions prévues
 
-## État actuel du projet
+Gestion d’un mot de passe par utilisateur ou par fichier
 
-### Itération 1 – Mise en place des bases
+Stockage sécurisé des clés
+Clé dérivée via PBKDF2 à partir d’un mot de passe global
 
-* Projet Maven fonctionnel
-* Architecture en couches en place
-* Point d’entrée unique (`Main`)
-* Interface CLI structurée
-* Premières commandes fonctionnelles (création, lecture, listing)
-* Gestion des erreurs via des exceptions métier
-* Dépôt GitLab organisé avec des commits réguliers
+Persistance des fichiers chiffrés entre les sessions
+Suppression sécurisée des fichiers en clair
 
-### Itération 2 – Intégrité et traçabilité
+Renforcement de la politique de sécurité
 
-* Mise en place d’un système de journalisation technique
-* Calcul d’empreintes de hachage (SHA-256) lors de la création des fichiers
-* Vérification de l’intégrité des fichiers à la lecture
-* Détection des modifications effectuées en dehors de l’application
-* Centralisation des logs dans la couche infrastructure
+Organisation du travail
 
----
+Le projet est réalisé en binôme, avec une collaboration sur :
 
-## Technologies utilisées
+la conception de l’architecture
 
-* Java 17
-* Maven
-* Git / GitLab
-* IntelliJ IDEA
-* Application en ligne de commande (CLI)
+l’implémentation des fonctionnalités
 
----
+l’intégration des mécanismes de sécurité
 
-## Évolutions prévues
+les tests et la validation
 
-### Itération 3
+ Lancer le projet
+Prérequis
+Java 17+
+Maven
+Exécution
+Le projet peut être lancé :
+depuis IntelliJ IDEA
+ou via Maven
+L’exécution démarre à partir de la classe :
 
-* Chiffrement des fichiers
-* Gestion sécurisée des clés
-* Renforcement de la confidentialité des données
-
----
-
-## Organisation du travail
-
-Le travail est réparti entre les deux membres du binôme :
-
-* Conception de l’architecture
-* Implémentation des différentes couches
-* Développement de l’interface CLI
-* Tests et validation des fonctionnalités
-
----
-
-## Lancer le projet
-
-Le projet peut être exécuté depuis **IntelliJ IDEA** ou via **Maven**.
-L’exécution démarre à partir de la classe `Main`.
-
+Main.java
+ce projet est realise par Madeleine Biaye et Enzo Jousse 
