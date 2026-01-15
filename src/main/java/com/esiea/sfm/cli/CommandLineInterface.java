@@ -36,6 +36,11 @@ public class CommandLineInterface {
                         System.out.println("Fichier créé : " + result.argument());
                     }
 
+                    case C_REP -> {
+                        fileService.createRep(result.argument());
+                        System.out.println("Répertoire créé : " + result.argument());
+                    }
+
                     case READ -> {
                         System.out.println(fileService.readFile(result.argument()));
                     }
@@ -49,7 +54,7 @@ public class CommandLineInterface {
 
                     case DELETE -> {
                         fileService.deleteFile(result.argument());
-                        System.out.println("Fichier supprimé.");
+                        System.out.println("Element supprimé.");
                     }
 
                     case LS -> {

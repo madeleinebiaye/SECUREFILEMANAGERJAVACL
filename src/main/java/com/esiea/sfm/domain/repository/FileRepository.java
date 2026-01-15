@@ -4,6 +4,7 @@ public interface FileRepository {
 
     // Création / suppression
     void create(String filename);
+    void createRep(String filename);
     void delete(String filename);
 
     // Lecture / écriture en clair (utilisées AVANT chiffrement)

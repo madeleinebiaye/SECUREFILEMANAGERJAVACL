@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
+blabla
 public class LocalFileRepository implements FileRepository {
 
     private static final int IV_SIZE = 12;
@@ -28,6 +28,24 @@ public class LocalFileRepository implements FileRepository {
         } catch (IOException e) {
             AppLogger.error("Erreur création fichier : " + filename);
             throw new FileAccessException("Impossible de créer le fichier.");
+        }
+    }
+
+    // Dans LocalFileRepository.java
+    @Override
+    public void createRep(String dirname) {
+        try {
+            AppLogger.info("Création du répertoire : " + dirname);
+            File dir = new File(dirname);
+            if (dir.exists()) {
+                throw new InvalidCommandException("Le dossier existe déjà.");
+            }
+            if (!dir.mkdir()) {
+                throw new FileAccessException("Échec de la création du dossier.");
+            }
+        } catch (Exception e) {
+            AppLogger.error("Erreur création répertoire : " + dirname);
+            throw new FileAccessException(e.getMessage());
         }
     }
 
@@ -78,6 +96,7 @@ public class LocalFileRepository implements FileRepository {
             throw new FileAccessException("Erreur d’écriture.");
         }
     }
+
 
     @Override
     public void listFiles() {

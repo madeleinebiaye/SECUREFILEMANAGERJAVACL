@@ -33,6 +33,10 @@ public class FileService {
         repository.storeHash(filename, hash);
     }
 
+    public void createRep(String dirname) {
+        repository.createRep(dirname);
+    }
+
     public String readFile(String filename) {
         // Lecture brute
         byte[] encryptedData = repository.readEncrypted(filename);
