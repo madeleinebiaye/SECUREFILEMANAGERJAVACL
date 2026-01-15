@@ -18,14 +18,14 @@ public class CommandParser {
         String argPart = (parts.length > 1) ? parts[1] : null;
 
         Command command = switch (cmdPart) {
-            case "create" -> Command.CREATE;
-            case "c_rep" -> Command.C_REP;
-            case "cd" -> Command.CD;
-            case "read"   -> Command.READ;
-            case "delete" -> Command.DELETE;
+            case "cf"     -> Command.CREATE;
+            case "cr"     -> Command.C_REP;
+            case "cd"     -> Command.CD;
+            case "lire"   -> Command.READ;
+            case "supp"   -> Command.DELETE;
             case "ls"     -> Command.LS;
-            case "update" -> Command.UPDATE;
-            case "help"   -> Command.HELP;
+            case "edit"   -> Command.UPDATE;
+            case "aide"   -> Command.HELP;
             case "exit"   -> Command.EXIT;
             default       -> Command.UNKNOWN;
         };
