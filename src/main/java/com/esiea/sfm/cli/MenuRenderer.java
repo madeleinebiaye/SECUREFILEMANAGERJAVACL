@@ -7,7 +7,8 @@ public class MenuRenderer {
         System.out.println("=== Secure File Manager ===");
         System.out.println("Commandes disponibles :");
         System.out.println(" - create <nom_fichier> : créer un nouveau fichier");
-        System.out.println(" - c_rep <nom_répertoire> : créer un nouveau répertoiee");
+        System.out.println(" - c_rep <nom_rép>      : créer un nouveau répertoiee");
+        System.out.println(" - cd <nom_répertoire>  : se déplacer dans un répertoiee");
         System.out.println(" - read <nom_fichier>   : lire le contenu d'un fichier");
         System.out.println(" - update <nom_fichier> : écrire dans un fichier");
         System.out.println(" - delete <nom_fichier> : supprimer un fichier");

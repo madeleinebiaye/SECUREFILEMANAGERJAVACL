@@ -36,6 +36,15 @@ public class CommandLineInterface {
                         System.out.println("Fichier créé : " + result.argument());
                     }
 
+                    case CD -> {
+                        if (result.argument() == null) {
+                            System.out.println("Usage : cd <nom_repertoire>");
+                        } else {
+                            fileService.changeDirectory(result.argument());
+                            System.out.println("Nouveau chemin : " + fileService.getCurrentPath());
+                        }
+                    }
+
                     case C_REP -> {
                         fileService.createRep(result.argument());
                         System.out.println("Répertoire créé : " + result.argument());

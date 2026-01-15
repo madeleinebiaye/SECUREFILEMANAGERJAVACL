@@ -6,6 +6,9 @@ public interface FileRepository {
     void create(String filename);
     void createRep(String filename);
     void delete(String filename);
+    
+    void changeDirectory(String dirname);
+    String getCurrentPathName();
 
     // Lecture / écriture en clair (utilisées AVANT chiffrement)
     String read(String filename);

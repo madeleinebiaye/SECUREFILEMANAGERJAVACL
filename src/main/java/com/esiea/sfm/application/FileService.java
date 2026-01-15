@@ -57,6 +57,14 @@ public class FileService {
         return content;
     }
 
+    public void changeDirectory(String dirname) {
+        repository.changeDirectory(dirname);
+    }
+
+    public String getCurrentPath() {
+        return repository.getCurrentPathName();
+    }
+
     public void updateFile(String filename, String content) {
         // Même logique que create
         createFile(filename, content);

@@ -7,9 +7,8 @@ import com.esiea.sfm.infrastructure.security.HashService;
 
 public class Main {
     public static void main(String[] args) {
-        LocalFileRepository repository = new LocalFileRepository();
+        LocalFileRepository repository = new LocalFileRepository("user_storage");
         HashService hashService = new HashService();
-
         FileService fileService = new FileService(repository, hashService);
         CommandLineInterface cli = new CommandLineInterface(fileService);
 

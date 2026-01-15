@@ -10,71 +10,114 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class LocalFileRepository implements FileRepository {
 
     private static final int IV_SIZE = 12;
+    private final Path rootPath;      // La racine fixe du coffre-fort [cite: 38]
+    private Path currentRelativePath; // Position actuelle de l'utilisateur
+
+    public LocalFileRepository(String rootDir) {
+        // Initialisation de la racine sécurisée [cite: 58]
+        this.rootPath = Paths.get(rootDir).toAbsolutePath().normalize();
+        this.currentRelativePath = Paths.get("");
+
+        try {
+            // Création automatique du répertoire utilisateur s'il n'existe pas [cite: 34]
+            Files.createDirectories(rootPath);
+            AppLogger.info("Système de fichiers initialisé dans : " + rootPath);
+        } catch (IOException e) {
+            throw new FileAccessException("Impossible d'initialiser le stockage.");
+        }
+    }
+
+    /**
+     * Sécurité cruciale : empêche de sortir du répertoire autorisé[cite: 38, 116].
+     */
+    private Path resolveSafePath(String inputPath) {
+        Path targetPath = rootPath.resolve(currentRelativePath)
+                .resolve(inputPath)
+                .normalize();
+
+        // Vérification que le chemin cible commence toujours par la racine
+        if (!targetPath.startsWith(rootPath)) {
+            AppLogger.error("Tentative d'évasion détectée !");
+            throw new InvalidCommandException("Accès refusé : Interdiction de sortir du répertoire autorisé.");
+        }
+        return targetPath;
+    }
+
+    @Override
+    public void changeDirectory(String dirname) {
+        if (dirname == null || dirname.equals("/")) {
+            currentRelativePath = Paths.get("");
+            return;
+        }
+
+        Path newPath = resolveSafePath(dirname);
+
+        if (Files.isDirectory(newPath)) {
+            // Mise à jour de la position relative [cite: 76]
+            currentRelativePath = rootPath.relativize(newPath);
+            AppLogger.info("Navigation : " + getCurrentPathName());
+        } else {
+            throw new InvalidCommandException("Le répertoire n'existe pas : " + dirname);
+        }
+    }
+
+    @Override
+    public String getCurrentPathName() {
+        return "/" + currentRelativePath.toString().replace(File.separator, "/");
+    }
 
     @Override
     public void create(String filename) {
         try {
-            AppLogger.info("Création du fichier : " + filename);
-
-            File file = new File(filename);
-            if (!file.createNewFile()) {
+            Path path = resolveSafePath(filename);
+            AppLogger.info("Création : " + filename);
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+            } else {
                 throw new FileAccessException("Le fichier existe déjà.");
             }
-
         } catch (IOException e) {
-            AppLogger.error("Erreur création fichier : " + filename);
-            throw new FileAccessException("Impossible de créer le fichier.");
+            throw new FileAccessException("Erreur lors de la création.");
         }
     }
 
-    // Dans LocalFileRepository.java
     @Override
     public void createRep(String dirname) {
+        Path path = resolveSafePath(dirname);
+        if (Files.exists(path)) {
+            throw new InvalidCommandException("Le dossier existe déjà.");
+        }
         try {
-            AppLogger.info("Création du répertoire : " + dirname);
-            File dir = new File(dirname);
-            if (dir.exists()) {
-                throw new InvalidCommandException("Le dossier existe déjà.");
-            }
-            if (!dir.mkdir()) {
-                throw new FileAccessException("Échec de la création du dossier.");
-            }
-        } catch (Exception e) {
-            AppLogger.error("Erreur création répertoire : " + dirname);
-            throw new FileAccessException(e.getMessage());
+            Files.createDirectory(path);
+            AppLogger.info("Répertoire créé : " + dirname);
+        } catch (IOException e) {
+            throw new FileAccessException("Échec de la création du dossier.");
         }
     }
 
     @Override
     public String read(String filename) {
         try {
-            AppLogger.info("Lecture du fichier : " + filename);
-
-            if (!Files.exists(Path.of(filename))) {
-                throw new InvalidCommandException("Fichier introuvable.");
-            }
-
-            return Files.readString(Path.of(filename));
-
+            Path path = resolveSafePath(filename);
+            if (!Files.exists(path)) throw new InvalidCommandException("Fichier introuvable.");
+            return Files.readString(path);
         } catch (IOException e) {
-            AppLogger.error("Erreur lecture fichier : " + filename);
-            throw new InvalidCommandException("Fichier introuvable.");
+            throw new InvalidCommandException("Erreur lecture fichier.");
         }
     }
 
     @Override
     public void delete(String filename) {
-        AppLogger.info("Suppression du fichier : " + filename);
-
-        File file = new File(filename);
-        if (!file.exists()) {
-            throw new InvalidCommandException("Fichier introuvable.");
-        }
-
-        if (!file.delete()) {
+        try {
+            Path path = resolveSafePath(filename);
+            if (!Files.deleteIfExists(path)) throw new InvalidCommandException("Fichier introuvable.");
+            AppLogger.info("Supprimé : " + filename);
+        } catch (IOException e) {
             throw new FileAccessException("Échec de la suppression.");
         }
     }
@@ -82,52 +125,38 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public void update(String filename, String content) {
         try {
-            AppLogger.info("Mise à jour du fichier : " + filename);
-
-            if (!Files.exists(Path.of(filename))) {
-                throw new InvalidCommandException("Fichier introuvable.");
-            }
-
-            Files.writeString(Path.of(filename), content);
-
+            Path path = resolveSafePath(filename);
+            if (!Files.exists(path)) throw new InvalidCommandException("Fichier introuvable.");
+            Files.writeString(path, content);
         } catch (IOException e) {
-            AppLogger.error("Erreur écriture fichier : " + filename);
-            throw new FileAccessException("Erreur d’écriture.");
+            throw new FileAccessException("Erreur d'écriture.");
         }
     }
 
-
     @Override
     public void listFiles() {
-        AppLogger.info("Listing des fichiers");
+        Path currentDir = rootPath.resolve(currentRelativePath);
+        File[] files = currentDir.toFile().listFiles();
 
-        File[] files = new File(".").listFiles();
-        if (files == null) {
-            throw new FileAccessException("Impossible de lire le répertoire.");
-        }
+        if (files == null) throw new FileAccessException("Erreur de lecture répertoire.");
 
         for (File f : files) {
-            System.out.println((f.isDirectory() ? "[DIR] " : "[FILE] ") + f.getName());
+            // Cacher les fichiers techniques (.hash) pour la clarté de l'interface [cite: 41, 85]
+            if (!f.getName().endsWith(".hash")) {
+                System.out.println((f.isDirectory() ? "[DIR] " : "[FILE] ") + f.getName());
+            }
         }
     }
 
     @Override
     public void writeEncrypted(String filename, byte[] data, byte[] iv) {
         try {
-            AppLogger.info("Écriture chiffrée du fichier : " + filename);
-
-            if (iv == null || iv.length != IV_SIZE) {
-                throw new InvalidCommandException("IV invalide.");
-            }
-
+            Path path = resolveSafePath(filename);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(iv);
             out.write(data);
-
-            Files.write(Path.of(filename), out.toByteArray());
-
+            Files.write(path, out.toByteArray());
         } catch (IOException e) {
-            AppLogger.error("Erreur écriture chiffrée : " + filename);
             throw new FileAccessException("Erreur écriture chiffrée.");
         }
     }
@@ -135,21 +164,12 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public byte[] readEncrypted(String filename) {
         try {
-            AppLogger.info("Lecture chiffrée du fichier : " + filename);
-
-            byte[] allBytes = Files.readAllBytes(Path.of(filename));
-
-            if (allBytes.length <= IV_SIZE) {
-                throw new InvalidCommandException("Fichier chiffré invalide.");
-            }
-
+            Path path = resolveSafePath(filename);
+            byte[] allBytes = Files.readAllBytes(path);
             byte[] encrypted = new byte[allBytes.length - IV_SIZE];
             System.arraycopy(allBytes, IV_SIZE, encrypted, 0, encrypted.length);
-
             return encrypted;
-
         } catch (IOException e) {
-            AppLogger.error("Erreur lecture chiffrée : " + filename);
             throw new FileAccessException("Erreur lecture chiffrée.");
         }
     }
@@ -157,21 +177,12 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public byte[] readIV(String filename) {
         try {
-            AppLogger.info("Lecture IV du fichier : " + filename);
-
-            byte[] allBytes = Files.readAllBytes(Path.of(filename));
-
-            if (allBytes.length < IV_SIZE) {
-                throw new InvalidCommandException("IV introuvable.");
-            }
-
+            Path path = resolveSafePath(filename);
+            byte[] allBytes = Files.readAllBytes(path);
             byte[] iv = new byte[IV_SIZE];
             System.arraycopy(allBytes, 0, iv, 0, IV_SIZE);
-
             return iv;
-
         } catch (IOException e) {
-            AppLogger.error("Erreur lecture IV : " + filename);
             throw new FileAccessException("Erreur lecture IV.");
         }
     }
@@ -179,11 +190,9 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public void storeHash(String filename, String hash) {
         try {
-            AppLogger.info("Sauvegarde hash pour : " + filename);
-            Files.writeString(Path.of(filename + ".hash"), hash);
-
+            Path path = resolveSafePath(filename + ".hash");
+            Files.writeString(path, hash);
         } catch (IOException e) {
-            AppLogger.error("Erreur sauvegarde hash : " + filename);
             throw new FileAccessException("Erreur sauvegarde hash.");
         }
     }
@@ -191,17 +200,9 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public String loadHash(String filename) {
         try {
-            AppLogger.info("Lecture hash pour : " + filename);
-
-            Path path = Path.of(filename + ".hash");
-            if (!Files.exists(path)) {
-                return null;
-            }
-
-            return Files.readString(path);
-
+            Path path = resolveSafePath(filename + ".hash");
+            return Files.exists(path) ? Files.readString(path) : null;
         } catch (IOException e) {
-            AppLogger.error("Erreur lecture hash : " + filename);
             throw new FileAccessException("Erreur lecture hash.");
         }
     }
@@ -209,11 +210,9 @@ public class LocalFileRepository implements FileRepository {
     @Override
     public void deleteHash(String filename) {
         try {
-            AppLogger.info("Suppression hash pour : " + filename);
-            Files.deleteIfExists(Path.of(filename + ".hash"));
-
+            Path path = resolveSafePath(filename + ".hash");
+            Files.deleteIfExists(path);
         } catch (IOException e) {
-            AppLogger.error("Erreur suppression hash : " + filename);
             throw new FileAccessException("Erreur suppression hash.");
         }
     }
