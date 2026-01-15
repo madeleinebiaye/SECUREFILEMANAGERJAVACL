@@ -14,12 +14,10 @@ public class CommandLineInterface {
     public CommandLineInterface(FileService fileService) {
         this.fileService = fileService;
     }
-
     public void start() {
         boolean running = true;
-
+        menuRenderer.display();
         while (running) {
-
             String input = scanner.nextLine();
             CommandParser.ParseResult result = parser.parse(input);
 
