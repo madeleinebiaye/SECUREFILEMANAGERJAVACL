@@ -21,14 +21,10 @@ public class FileService {
     }
 
     public void createFile(String filename, String content) {
-        // Chiffrement
-        CryptoService.EncryptedData encrypted =
-                cryptoService.encrypt(content.getBytes());
+        CryptoService.EncryptedData encrypted =cryptoService.encrypt(content.getBytes());
 
-        // Écriture chiffrée
         repository.writeEncrypted(filename, encrypted.data(), encrypted.iv());
 
-        // Stockage de l’empreinte
         String hash = hashService.calculateHash(content);
         repository.storeHash(filename, hash);
     }
@@ -38,20 +34,17 @@ public class FileService {
     }
 
     public String readFile(String filename) {
-        // Lecture brute
         byte[] encryptedData = repository.readEncrypted(filename);
         byte[] iv = repository.readIV(filename);
 
-        // Déchiffrement
         byte[] decrypted = cryptoService.decrypt(encryptedData, iv);
         String content = new String(decrypted);
 
-        // Vérification d’intégrité
         String currentHash = hashService.calculateHash(content);
         String storedHash = repository.loadHash(filename);
 
         if (storedHash != null && !storedHash.equals(currentHash)) {
-            return " ALERTE SÉCURITÉ : Le fichier a été modifié hors de l’application.";
+            return " Le fichier a été modifié hors du gestionnaire !!";
         }
 
         return content;
@@ -66,7 +59,6 @@ public class FileService {
     }
 
     public void updateFile(String filename, String content) {
-        // Même logique que create
         createFile(filename, content);
     }
 

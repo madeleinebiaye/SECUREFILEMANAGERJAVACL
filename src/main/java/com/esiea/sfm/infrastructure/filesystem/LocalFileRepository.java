@@ -22,7 +22,7 @@ public class LocalFileRepository implements FileRepository {
         this.rootPath = Paths.get(rootDir).toAbsolutePath().normalize();
         this.currentRelativePath = Paths.get("");
     }
-
+    // pour chemins
     private Path resolveSafePath(String inputPath) {
         Path targetPath = rootPath.resolve(currentRelativePath).resolve(inputPath).normalize();
 
@@ -35,15 +35,13 @@ public class LocalFileRepository implements FileRepository {
 
     @Override
     public void changeDirectory(String dirname) {
-        if (dirname == null || dirname.equals("/")) {
-            currentRelativePath = Paths.get("");
+        if (dirname.equals("/")) {
             return;
         }
 
         Path newPath = resolveSafePath(dirname);
 
         if (Files.isDirectory(newPath)) {
-            // Mise à jour de la position relative [cite: 76]
             currentRelativePath = rootPath.relativize(newPath);
             AppLogger.info("Navigation : " + getCurrentPathName());
         } else {
@@ -56,6 +54,23 @@ public class LocalFileRepository implements FileRepository {
         return "/" + currentRelativePath.toString().replace(File.separator, "/");
     }
 
+
+    @Override
+    public void listFiles() {
+        Path currentDir = rootPath.resolve(currentRelativePath); //combiné les chemins
+        File[] files = currentDir.toFile().listFiles();
+
+        if (files == null) throw new FileAccessException("Erreur de lecture répertoire");
+
+        for (File f : files) {
+            if (!f.getName().endsWith(".hash")) {
+                System.out.println((f.isDirectory() ? "Répertoire : " : "Fichier : ") + f.getName());
+            }
+        }
+    }
+
+
+    // cud
     @Override
     public void create(String filename) {
         try {
@@ -86,13 +101,13 @@ public class LocalFileRepository implements FileRepository {
     }
 
     @Override
-    public String read(String filename) {
+    public void update(String filename, String content) {
         try {
             Path path = resolveSafePath(filename);
             if (!Files.exists(path)) throw new InvalidCommandException("Fichier introuvable.");
-            return Files.readString(path);
+            Files.writeString(path, content);
         } catch (IOException e) {
-            throw new InvalidCommandException("Erreur lecture fichier.");
+            throw new FileAccessException("Erreur d'écriture.");
         }
     }
 
@@ -107,31 +122,8 @@ public class LocalFileRepository implements FileRepository {
         }
     }
 
-    @Override
-    public void update(String filename, String content) {
-        try {
-            Path path = resolveSafePath(filename);
-            if (!Files.exists(path)) throw new InvalidCommandException("Fichier introuvable.");
-            Files.writeString(path, content);
-        } catch (IOException e) {
-            throw new FileAccessException("Erreur d'écriture.");
-        }
-    }
 
-    @Override
-    public void listFiles() {
-        Path currentDir = rootPath.resolve(currentRelativePath); //combiné les chemins
-        File[] files = currentDir.toFile().listFiles();
-
-        if (files == null) throw new FileAccessException("Erreur de lecture répertoire");
-
-        for (File f : files) {
-            if (!f.getName().endsWith(".hash")) {
-                System.out.println((f.isDirectory() ? "Répertoire : " : "Fichier : ") + f.getName());
-            }
-        }
-    }
-
+    //pour chiffrement
     @Override
     public void writeEncrypted(String filename, byte[] data, byte[] iv) {
         try {
@@ -149,12 +141,24 @@ public class LocalFileRepository implements FileRepository {
     public byte[] readEncrypted(String filename) {
         try {
             Path path = resolveSafePath(filename);
+
+            if (!Files.exists(path)) {
+                throw new InvalidCommandException("Fichier introuvable : " + filename);
+            }
+
             byte[] allBytes = Files.readAllBytes(path);
+
+            if (allBytes.length < IV_SIZE) {
+                throw new InvalidCommandException("Le fichier est corrompu ou trop court.");
+            }
+
             byte[] encrypted = new byte[allBytes.length - IV_SIZE];
             System.arraycopy(allBytes, IV_SIZE, encrypted, 0, encrypted.length);
+
             return encrypted;
+
         } catch (IOException e) {
-            throw new FileAccessException("Erreur lecture chiffrée.");
+            throw new FileAccessException("Erreur technique lors de la lecture : " + e.getMessage());
         }
     }
 
@@ -171,6 +175,8 @@ public class LocalFileRepository implements FileRepository {
         }
     }
 
+
+    //pour hash
     @Override
     public void storeHash(String filename, String hash) {
         try {

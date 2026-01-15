@@ -29,10 +29,8 @@ public class CommandLineInterface {
                     case CREATE -> {
                         fileService.createFile(result.argument());
 
-                        // Log technique
                         AppLogger.info("Création du fichier : " + result.argument());
 
-                        // Message utilisateur
                         System.out.println("Fichier créé : " + result.argument());
                     }
 
@@ -47,7 +45,7 @@ public class CommandLineInterface {
 
                     case C_REP -> {
                         fileService.createRep(result.argument());
-                        System.out.println("Répertoire créé : " + result.argument());
+
                     }
 
                     case READ -> {
@@ -84,7 +82,6 @@ public class CommandLineInterface {
                     }
                 }
             } catch (RuntimeException e) {
-                // Toutes les exceptions métier arrivent ici
                 System.out.println("--- ERREUR : " + e.getMessage() + " ---");
             }
         }

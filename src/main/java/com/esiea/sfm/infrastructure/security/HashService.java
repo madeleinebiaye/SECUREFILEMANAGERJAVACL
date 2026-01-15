@@ -16,7 +16,7 @@ public class HashService {
             return HexFormat.of().formatHex(encodedHash);
 
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Erreur critique : Algorithme de hachage introuvable", e);
+            throw new RuntimeException("Erreur de hachage", e);
         }
     }
 }

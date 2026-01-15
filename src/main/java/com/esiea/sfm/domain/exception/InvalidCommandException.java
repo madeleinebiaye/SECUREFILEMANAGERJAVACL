@@ -1,6 +1,6 @@
 package com.esiea.sfm.domain.exception;
 
-// fichier manquant
+// pour fichier qui manquent
 public class InvalidCommandException extends RuntimeException {
     public InvalidCommandException(String message) { super(message); }
 }
