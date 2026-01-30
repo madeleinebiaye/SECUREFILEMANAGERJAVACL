@@ -115,7 +115,7 @@ Chiffrement des fichiers avec AES-GCM
 
 IV aléatoire pour chaque opération
 
-🚀 Évolutions prévues
+Évolutions prévues
 
 Gestion d’un mot de passe par utilisateur ou par fichier
 
